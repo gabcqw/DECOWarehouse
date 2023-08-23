@@ -1,12 +1,9 @@
-# set up default values in the warehouse system: Inventory and account
-# input account initial balance 10,000.
-import warehousefunctions
-
+#import saving loading functions
 from ManagerDECO import manager
-
-file_name1 = input("Please enter a name for inventory (i.e. .txt): ")
-file_name2 = input("Please enter a name for balance (i.e. .txt): ")
-file_name3 = input("Please enter a name for history (i.e. .txt): ")
+import warehousefunctions
+file_name1= input("Please enter a name for inventory (i.e. .txt): ")
+file_name2= input("Please enter a name for balance (i.e. .txt): ")
+file_name3= input("Please enter a name for history (i.e. .txt): ")
 
 inventory_dict = warehousefunctions.loading_inventory(file_name1)
 account = warehousefunctions.loading_balance(file_name2)
@@ -14,35 +11,103 @@ history = warehousefunctions.loading_history(file_name3)
 
 option = ""
 
-
+#rewrite def sale function
 @manager.assign("sale")
-def sale_func():
-    # Load data from input
-    key = input("Provide the name of product sold: ").lower()
-    unit_price = float(input("Provide the unit price: "))
-    quantity = int(input("Provide the quantity sold: "))
-
-    # Check if product in inventory
-    if key not in inventory_dict.keys():
-        print("This product does not exist.")
-        return
-    # Check if enough quantity of product
-    if inventory_dict[key] < quantity:
-        print(f"Not enough {key} for this transaction")
-        return
-
-    # Process sales
-    sales = unit_price * quantity
-    inventory_dict[key]["amount"] -= quantity
-    account = account + sales
-    print(f"This deal- {key} brought you {sales} euros revenue.")
-
-    # Save to history
-    change = f"This deal -{key} brought you {sales} euros revenue."
-    history.append(change)
+def sales_func(key = "sale"):
+    #define objects 
+        key = input("Provide the name of product sold: ").lower()
+        unit_price = float(input("Provide the unit price: "))
+        quantity = int(input("Provide the quantity sold: "))
+        #check if sale matches inventory
+        if key not in inventory_dict.keys():
+            print("This product does not exist.")
+            return
+        #selling activity 
+        sales = unit_price * quantity
+        inventory_dict[key]["amount"] -= quantity
+        account = account + sales
+        print(f"This deal- {key} brought you {sales} euros revenue.")
+        #save the change
+        change = (f"This deal -{key} brought you {sales} euros revenue.")
+        history.append(change) 
 
 
-# Insert while loop to run commands
+def purchase_func():
+      #define objects 
+     input("Provide the name of product bought: ").lower()
+     unit_price = float(input("Provide the unit price: "))
+     quantity = int(input("Provide the quantity purchased: "))
+     #calculate purchase
+     purchase = unit_price * quantity
+     account = account - purchase
+     print(f"This deal - {key} cost you {purchase} euros.")
+     change = (f"This deal-{key} cost you {purchase} euros.")
+     history.append(change)
+    #set up filter 
+     if purchase > account:
+            print("Current balance is not enough to purchase these products.")
+            return
+     
+     if key not in inventory_dict:
+        inventory_dict[key] = {"amount": 0, "unit_price":0}
+        inventory_dict[key]['unit_price'] = unit_price
+        inventory_dict[key]['amount'] += quantity
+        print(key) 
+        print(inventory_dict[key]['unit_price'])
+        print(inventory_dict[key]['amount'])
+
+def account_func():
+    print(account)
+
+def balance_func():
+        balance_command = input("Enter 'add' to add money or 'subtract' to subtract money: ")
+
+        if balance_command == "add":
+            amount = float(input("Enter an amount to add: "))
+            account = account + amount
+            print(f"You have added {amount} euros onto the account")
+            change = (f"You have added {amount} euros onto the account")
+            history.append(change)
+        elif balance_command == "subtract":
+            amount = float(input("Enter an amount to subtract: "))
+            if amount > account:
+                print("It's invalid input! Money you wish to subtract cannot exceed current balance.")
+            else:
+                account = account - amount
+                print(f"You have withdrawn {amount} euros from the account")
+                change = (f"You have withdrawn {amount} euros from the account")
+                history.append(change)
+        else:
+            print("It's invalid input! Please try again. ")
+
+def history_func():
+        from_value = input("Please enter the from value: ")
+        to_value = input("Please enter the to value: ")
+    
+        if from_value == "" and to_value == "":
+            for i in history:
+                print(i)
+        elif from_value != "" and to_value == "":
+            for i in history[int(from_value)-1:]:
+                print(i)
+        elif from_value == "" and to_value !="":
+            for i in history[:int(to_value)+1]:
+                print(i)
+        else:
+            for i in history[int(from_value)-1:int(to_value)]:
+                print(i)
+
+def inventory_func():
+        print("Inventory status:\n")
+        print(inventory_dict)
+
+def warehouse_func():
+        key = input("Enter the name of the product: ")
+        print(key)
+        print(inventory_dict[key]['unit_price'])
+        print(inventory_dict[key]['amount'])
+
+#Insert while loop to run commands
 while True:
     print("Hiya user, welcome to warehouse system! See the available commands:\n ")
     print("exit -to log out\n")
@@ -54,58 +119,65 @@ while True:
     print("history - the update record in the system\n")
     command = input("Provide a command: ").lower()
 
-    # Enter'sale': command entered for selected product name -  unit price, quantity
-    # display sales record and updated- sale quantity should not exceed the inventory
-    # ****my question!shall I only restrict my items listed in the dictionary in sale? How to do that?
+#Enter'sale': command entered for selected product name -  unit price, quantity
+#display sales record and updated- sale quantity should not exceed the inventory
     if command == "sale":
-        manager.execute("sale")
+        key = input("Provide the name of product sold: ").lower()
+        if key not in inventory_dict.keys():
+            print("This product does not exist.")
+            continue
+        unit_price = float(input("Provide the unit price: "))
+        quantity = int(input("Provide the quantity sold: "))
+        sales = unit_price * quantity
+        inventory_dict[key]["amount"] -= quantity
+        account = account + sales
+        print(f"This deal- {key} brought you {sales} euros revenue.")
+        change = (f"This deal -{key} brought you {sales} euros revenue.")
+        history.append(change) 
+
+    
 
     elif command == "purchase":
-        key = input("Provide the name of product bought: ").lower()
-        unit_price = float(input("Provide the unit price: "))
-        quantity = int(input("Provide the quantity purchased: "))
-        purchase = unit_price * quantity
-        print(f"This deal - {key} cost you {purchase} euros.")
-        change = f"This deal-{key} cost you {purchase} euros."
-        history.append(change)
+      key = input("Provide the name of product bought: ").lower()
+      unit_price = float(input("Provide the unit price: "))
+      quantity = int(input("Provide the quantity purchased: "))
+      purchase = unit_price * quantity
+      print(f"This deal - {key} cost you {purchase} euros.")
+      change = (f"This deal-{key} cost you {purchase} euros.")
+      history.append(change)
 
-        if purchase > account:
-            print("Current balance is not enough to purchase these products.")
-            continue
-        if key not in inventory_dict:
-            inventory_dict[key] = {"amount": 0, "unit_price": 0}
-        inventory_dict[key]["unit_price"] = unit_price
-        inventory_dict[key]["amount"] += quantity
-        print(key)
-        print(inventory_dict[key]["unit_price"])
-        print(inventory_dict[key]["amount"])
-        account = account - purchase
+      if purchase > account:
+          print("Current balance is not enough to purchase these products.")
+          continue
+      if key not in inventory_dict:
+          inventory_dict[key] = {"amount": 0, "unit_price":0}
+      inventory_dict[key]['unit_price'] = unit_price
+      inventory_dict[key]['amount'] += quantity
+      print(key) 
+      print(inventory_dict[key]['unit_price'])
+      print(inventory_dict[key]['amount'])
+      account = account - purchase
 
-    # how to display inventory in the dictionary? balance >0 if balance =< account true, acc -= purchase
-
+        
     elif command == "account":
         print(account)
-
+    
     elif command == "balance":
-        balance_command = input(
-            "Enter 'add' to add money or 'subtract' to subtract money: "
-        )
+        balance_command = input("Enter 'add' to add money or 'subtract' to subtract money: ")
         if balance_command == "add":
             amount = float(input("Enter an amount to add: "))
             account = account + amount
             print(f"You have added {amount} euros onto the account")
-            change = f"You have added {amount} euros onto the account"
+            change = (f"You have added {amount} euros onto the account")
             history.append(change)
         elif balance_command == "subtract":
             amount = float(input("Enter an amount to subtract: "))
             if amount > account:
-                print(
-                    "It's invalid input! Money you wish to subtract cannot exceed current balance."
-                )
+                print("It's invalid input! Money you wish to subtract cannot exceed current balance.")
             else:
                 account = account - amount
                 print(f"You have withdrawn {amount} euros from the account")
-                change = f"You have withdrawn {amount} euros from the account"
+                change = (f"You have withdrawn {amount} euros from the account")
                 history.append(change)
         else:
             print("It's invalid input! Please try again. ")
@@ -117,24 +189,25 @@ while True:
             for i in history:
                 print(i)
         elif from_value != "" and to_value == "":
-            for i in history[int(from_value) - 1 :]:
+            for i in history[int(from_value)-1:]:
                 print(i)
-        elif from_value == "" and to_value != "":
-            for i in history[: int(to_value) + 1]:
+        elif from_value == "" and to_value !="":
+            for i in history[:int(to_value)+1]:
                 print(i)
         else:
-            for i in history[int(from_value) - 1 : int(to_value)]:
+            for i in history[int(from_value)-1:int(to_value)]:
                 print(i)
-
+    
     elif command == "inventory":
         print("Inventory status:\n")
         print(inventory_dict)
 
+
     elif command == "warehouse":
         key = input("Enter the name of the product: ")
         print(key)
-        print(inventory_dict[key]["unit_price"])
-        print(inventory_dict[key]["amount"])
+        print(inventory_dict[key]['unit_price'])
+        print(inventory_dict[key]['amount'])
 
     elif command == "exit":
         print("You will exit the system.")
@@ -143,5 +216,7 @@ while True:
         warehousefunctions.saving_history(file_name3, history)
         break
 
+
     else:
         print("It's invalid input! Please try again or enter exit to leave. ")
+
