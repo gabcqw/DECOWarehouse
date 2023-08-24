@@ -1,0 +1,1 @@
+{'shampoo': {'unit_price': 15.0, 'amount': 3}}
