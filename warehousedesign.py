@@ -2,13 +2,12 @@
 
 import warehousefunctions
 
-from ManagerDECO import manager
+from ManagerDECO import Manager
+manager=Manager()
 
 option = ""
 
-file_name1= input("Please enter a name for inventory (i.e. .txt): ")
-file_name2= input("Please enter a name for balance (i.e. .txt): ")
-file_name3= input("Please enter a name for history (i.e. .txt): ")
+
 
 #rewrite def sale function
 @manager.assign("sale")
