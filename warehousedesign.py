@@ -6,6 +6,10 @@ from ManagerDECO import manager
 
 option = ""
 
+file_name1= input("Please enter a name for inventory (i.e. .txt): ")
+file_name2= input("Please enter a name for balance (i.e. .txt): ")
+file_name3= input("Please enter a name for history (i.e. .txt): ")
+
 #rewrite def sale function
 @manager.assign("sale")
 def sales_func(manager):
@@ -29,7 +33,7 @@ def sales_func(manager):
 @manager.assign("purchase")
 def purchase_func(manager):
       #define objects 
-     input("Provide the name of product bought: ").lower()
+     key = input("Provide the name of product bought: ").lower()
      unit_price = float(input("Provide the unit price: "))
      quantity = int(input("Provide the quantity purchased: "))
      #calculate purchase
@@ -128,7 +132,6 @@ while True:
     elif command == "purchase":
         manager.execute("purchase")
       
-
         
     elif command == "account":
         manager.execute("account")
