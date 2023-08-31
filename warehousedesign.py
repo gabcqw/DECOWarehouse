@@ -3,6 +3,9 @@
 import warehousefunctions
 
 from ManagerDECO import Manager
+
+
+
 manager=Manager()
 
 option = ""
@@ -37,15 +40,15 @@ def purchase_func(manager):
      quantity = int(input("Provide the quantity purchased: "))
      #calculate purchase
      purchase = unit_price * quantity
-     account = account - purchase
+     manager.account = manager.account - purchase
      print(f"This deal - {key} cost you {purchase} euros.")
      change = (f"This deal-{key} cost you {purchase} euros.")
      manager.history.append(change)
     #set up filter 
-     if purchase > account:
+     if purchase > manager.account:
             print("Current balance is not enough to purchase these products.")
             return
-     
+     #这变的MANAGER INVENTORY DICT是不是要改成Manager. Inventory?
      if key not in manager.inventory_dict:
         manager.inventory_dict[key] = {"amount": 0, "unit_price":0}
         manager.inventory_dict[key]['unit_price'] = unit_price
@@ -55,25 +58,25 @@ def purchase_func(manager):
         print(manager.inventory_dict[key]['amount'])
 
 @manager.assign("account")
-def account_func():
+def account_func(manager):
     print(manager.account)
 
 @manager.assign("balance")
-def balance_func():
+def balance_func(manager):
         balance_command = input("Enter 'add' to add money or 'subtract' to subtract money: ")
 
         if balance_command == "add":
             amount = float(input("Enter an amount to add: "))
-            account = account + amount
+            manager.account = manager.account + amount
             print(f"You have added {amount} euros onto the account")
             change = (f"You have added {amount} euros onto the account")
             manager.history.append(change)
         elif balance_command == "subtract":
             amount = float(input("Enter an amount to subtract: "))
-            if amount > account:
+            if amount > manager.account:
                 print("It's invalid input! Money you wish to subtract cannot exceed current balance.")
             else:
-                account = account - amount
+                manager.account = manager.account - amount
                 print(f"You have withdrawn {amount} euros from the account")
                 change = (f"You have withdrawn {amount} euros from the account")
                 manager.history.append(change)
@@ -81,7 +84,7 @@ def balance_func():
             print("It's invalid input! Please try again. ")
 
 @manager.assign("history")
-def history_func():
+def history_func(manager):
         from_value = input("Please enter the from value: ")
         to_value = input("Please enter the to value: ")
     
@@ -99,12 +102,12 @@ def history_func():
                 print(i)
 
 @manager.assign("inventory")
-def inventory_func():
+def inventory_func(manager):
         print("Inventory status:\n")
         print(manager.inventory_dict)
 
 @manager.assign("warehouse")
-def warehouse_func():
+def warehouse_func(manager):
         key = input("Enter the name of the product: ")
         print(key)
         print(manager.inventory_dict[key]['unit_price'])
@@ -149,9 +152,7 @@ while True:
 
     elif command == "exit":
         print("You will exit the system.")
-        warehousefunctions.saving_inventory(file_name1, manager.inventory_dict)
-        warehousefunctions.saving_balance(file_name2, manager.account)
-        warehousefunctions.saving_history(file_name3, manager.history)
+        manager.exit()
         break
 
 
