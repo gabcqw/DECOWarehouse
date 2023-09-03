@@ -20,12 +20,12 @@ def sales_func(manager):
         unit_price = float(input("Provide the unit price: "))
         quantity = int(input("Provide the quantity sold: "))
         #check if sale matches inventory
-        if key not in manager.inventory_dict.keys():
+        if key not in manager.inventory.keys():
             print("This product does not exist.")
             return
         #selling activity 
         sales = unit_price * quantity
-        manager.inventory_dict[key]["amount"] -= quantity
+        manager.inventory[key]["amount"] -= quantity
         manager.account = manager.account + sales
         print(f"This deal- {key} brought you {sales} euros revenue.")
         #save the change
@@ -48,14 +48,14 @@ def purchase_func(manager):
      if purchase > manager.account:
             print("Current balance is not enough to purchase these products.")
             return
-     #这变的MANAGER INVENTORY DICT是不是要改成Manager. Inventory?
-     if key not in manager.inventory_dict:
-        manager.inventory_dict[key] = {"amount": 0, "unit_price":0}
-        manager.inventory_dict[key]['unit_price'] = unit_price
-        manager.inventory_dict[key]['amount'] += quantity
+    
+     if key not in manager.inventory:
+        manager.inventory[key] = {"amount": 0, "unit_price":0}
+        manager.inventory[key]['unit_price'] = unit_price
+        manager.inventory[key]['amount'] += quantity
         print(key) 
-        print(manager.inventory_dict[key]['unit_price'])
-        print(manager.inventory_dict[key]['amount'])
+        print(manager.inventory[key]['unit_price'])
+        print(manager.inventory[key]['amount'])
 
 @manager.assign("account")
 def account_func(manager):
@@ -104,14 +104,14 @@ def history_func(manager):
 @manager.assign("inventory")
 def inventory_func(manager):
         print("Inventory status:\n")
-        print(manager.inventory_dict)
+        print(manager.inventory)
 
 @manager.assign("warehouse")
 def warehouse_func(manager):
         key = input("Enter the name of the product: ")
         print(key)
-        print(manager.inventory_dict[key]['unit_price'])
-        print(manager.inventory_dict[key]['amount'])
+        print(manager.inventory[key]['unit_price'])
+        print(manager.inventory[key]['amount'])
 
 #Insert while loop to run commands
 while True:
